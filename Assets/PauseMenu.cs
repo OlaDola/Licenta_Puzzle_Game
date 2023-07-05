@@ -5,16 +5,26 @@ using UnityEngine;
 public class PauseMenu : MonoBehaviour
 {
     public static bool isPause;
+    public static bool newLevel;
+    public static bool newLevelEmpty;
 
+    [SerializeField] Grid_Show GridSystem;
     [SerializeField] GameObject unsavedChangesBackground;
     [SerializeField] GameObject pauseMenu;
+    [SerializeField] GameObject levelCompleteMenu;
     [SerializeField] Level_Loader levelLoader;
     [SerializeField] Animator transitionUnsavedChanges;
+    [SerializeField] Animator transitionNewLevelName;
     [SerializeField] Animator transitionPauseMenu;
+    [SerializeField] Animator transitionListLevelMenu;
+    [SerializeField] Animator transitionLevelCompleteMenu;
+    [SerializeField] Animator transitionLevelCompleteLevelListMenu;
+    [SerializeField] TMPro.TMP_InputField newLevelName;
 
     private void Awake()
     {
-        if(!levelLoader.gameObject.activeSelf)
+        GridSystem = GameObject.Find("Grid").GetComponent<Grid_Show>();
+        if (!levelLoader.gameObject.activeSelf)
             levelLoader.gameObject.SetActive(true);
     }
 
@@ -44,9 +54,24 @@ public class PauseMenu : MonoBehaviour
         isPause = true;
     }
 
+    public void LevelComplete()
+    {
+        levelCompleteMenu.SetActive(true);
+
+        isPause = true;
+        transitionLevelCompleteMenu.SetTrigger("LevelList");
+    }
+
+    public void SelectLevelComplete()
+    {
+        transitionLevelCompleteMenu.SetTrigger("LevelList");
+        transitionLevelCompleteLevelListMenu.SetTrigger("LevelList");
+    }
+
     public void SelectLevel()
     { 
         transitionPauseMenu.SetTrigger("LevelList");
+        transitionListLevelMenu.SetTrigger("LevelList");
     }
 
     public void Continue()
@@ -65,6 +90,14 @@ public class PauseMenu : MonoBehaviour
         isPause = !isPause;
         unsavedChangesBackground.SetActive(isPause);
         transitionUnsavedChanges.SetTrigger("Unsaved");
+    }
+
+    public void NewLevelName()
+    {
+        isPause = !isPause;
+        unsavedChangesBackground.SetActive(isPause);
+        transitionNewLevelName.SetTrigger("Name");
+        newLevelName.text = "";
     }
 
     public void LoadLevel()

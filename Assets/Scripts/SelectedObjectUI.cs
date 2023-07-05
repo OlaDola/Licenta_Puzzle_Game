@@ -11,7 +11,7 @@ public class SelectedObjectUI : MonoBehaviour
     public void Awake()
     {
         placedObjectTypeTransformDic.Add(AssetList.GroundPlatform, transform.Find("GroundPlatform"));
-
+        placedObjectTypeTransformDic.Add(AssetList.EndPlatform, transform.Find("EndPlatform"));
 
         transform.Find("ArrowBtn").GetComponent<ButtonUI>().ClickFunc = () => {
             Grid_Show.Instance.DeselectObjectType();

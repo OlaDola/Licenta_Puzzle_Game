@@ -95,6 +95,16 @@ public static class SaveSystem
         }
     }
 
+    public static void Delete(string levelname)
+    {
+        Init();
+        if(Directory.Exists(SAVE_FOLDER + levelname))
+        {
+            Directory.Delete(SAVE_FOLDER + levelname, true);
+            File.Delete(SAVE_FOLDER + levelname + ".meta");
+        }
+    }
+
     public static string LoadMostRecentFile()
     {
         Init();

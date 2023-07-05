@@ -37,7 +37,6 @@ public class PortalScript : MonoBehaviour
         {
             PortalTraveller traveller = trackedTravellers[i];
             Transform travellerT = traveller.transform;
-            
             var m = linkedPortal.transform.localToWorldMatrix * transform.worldToLocalMatrix * travellerT.localToWorldMatrix;
 
             Vector3 OffsetFromPortal = travellerT.position - transform.position;
@@ -103,7 +102,6 @@ public class PortalScript : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         var traveller = other.GetComponent<PortalTraveller>();
-
         if (traveller)
         {
             OnTravellerEnterPortal(traveller);

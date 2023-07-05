@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Styles/LevelList.uss?fileID=7433441132597879392&amp;guid=7599a434cf79e26438a3eb84ebd9294f&amp;type=3#LevelList" />
+    <ui:VisualElement style="width: 100%; height: 100%;">
+        <ui:ListView focusable="true" style="width: 35%; height: 80%;" />
+    </ui:VisualElement>
+</ui:UXML>

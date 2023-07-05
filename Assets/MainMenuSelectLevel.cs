@@ -28,12 +28,6 @@ public class MainMenuSelectLevel : MonoBehaviour
 
         RefreshSelectedVisual();
 
-        foreach (Transform child in transform)
-        {
-            //currentButton = child;
-            Button btn = child.GetComponent<Button>();
-            btn.onClick.AddListener(SetLevelDisplay);
-        }
     }
 
     public void ResetSelectLevel()
@@ -47,7 +41,7 @@ public class MainMenuSelectLevel : MonoBehaviour
 
     private void SetLevelDisplay()
     {
-        LevelSelected = EventSystem.current.currentSelectedGameObject.name;
+        LevelSelected = EventSystem.current.currentSelectedGameObject.transform.parent.name;
         RefreshSelectedVisual();
         LoadButton.SetActive(true);
         LevelPreview.SetActive(true);
@@ -76,11 +70,13 @@ public class MainMenuSelectLevel : MonoBehaviour
             {
                 GameObject levelUI = Instantiate(LevelUI, transform);
                 SettingUI(levelUI, levelFolder.Name);
+                Button btn = levelUI.transform.Find("LevelButton").GetComponent<Button>();
+                btn.onClick.AddListener(SetLevelDisplay);
             }
         }
         foreach (Transform child in transform)
         {
-            child.Find("Selected").gameObject.SetActive(LevelSelected == child.name);
+            child.Find("LevelButton").Find("Selected").gameObject.SetActive(LevelSelected == child.name);
         }
         PlayerPrefs.SetString("LevelSystemSave", LevelSelected);
     }
@@ -90,7 +86,7 @@ public class MainMenuSelectLevel : MonoBehaviour
         //UI.GetComponent<RectTransform>().localScale = new Vector3(1.2f, 1.2f, 1);
         if (image)
             UI.transform.Find("Image").GetComponent<Image>().sprite = image;
-        UI.transform.Find("LevelName").GetComponent<TMPro.TextMeshProUGUI>().SetText(levelName);
+        UI.transform.Find("LevelButton").Find("LevelName").GetComponent<TMPro.TextMeshProUGUI>().SetText(levelName);
         UI.transform.gameObject.name = levelName;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class GroudGhost : MonoBehaviour
 {
@@ -25,8 +26,10 @@ public class GroudGhost : MonoBehaviour
     {
         Vector3 targetPosition = Grid_Show.Instance.GetMouseWorldSnapped();
         targetPosition.y = 1f;
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 15f);
-        transform.rotation = Quaternion.Lerp(transform.rotation, Grid_Show.Instance.GetPlacedObjectRotation(), Time.deltaTime * 15f);
+        transform.DOMove(targetPosition, Time.deltaTime * 15f);
+        //transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 15f);
+        transform.DORotateQuaternion(Grid_Show.Instance.GetPlacedObjectRotation(), Time.deltaTime * 15f);
+        //transform.rotation = Quaternion.Lerp(transform.rotation, Grid_Show.Instance.GetPlacedObjectRotation(), Time.deltaTime * 15f);
         if(Grid_Show.Instance.GetPlacedObjectType()!=null)
         { 
             TargetCanBuild(targetPosition);

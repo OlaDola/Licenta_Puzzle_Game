@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Baracuda.Monitoring;
+using DG.Tweening;
 
-public class CameraTest : MonitoredBehaviour
+public class CameraTest : MonoBehaviour
 {
     public CameraTest Instance { get; private set; }
     public Camera MainCamera;
@@ -83,7 +83,8 @@ public class CameraTest : MonitoredBehaviour
         CameraGridNumberChangedQuaternion = new Quaternion(0.216439605f, 0, 0, 0.976296067f);
         CameraGridNumberChangedVectorPreview = new Vector3(GridSystem.GetMiddlePosition().x, GridSystem.GetMiddlePosition().x, -((GridSystem.GetMiddlePosition().x) * 2) / 3);
         CameraGridNumberChangedQuaternionPreview = new Quaternion(0.216439605f, 0, 0, 0.976296067f);
-        HandlePositionGridMain(MainCamera, CameraGridNumberChangedVector, CameraGridNumberChangedQuaternion, 0.5f);
+        MainCamera.transform.DOMove(CameraGridNumberChangedVector, 1f);
+        MainCamera.transform.DORotateQuaternion(CameraGridNumberChangedQuaternion, 1f);
         if (PlayerPrefs.GetInt("PlayMode") != 1)
             PreviewCamera.transform.position = CameraGridNumberChangedVectorPreview;
         Debug.Log(MainCamera.transform.position);
@@ -207,13 +208,13 @@ public class CameraTest : MonitoredBehaviour
                         switch (dir)
                         {
                             case OrthoView.Dir.Left:
-                                //Debug.Log("MinPositionLeft:" + minPosition);
+                                Debug.Log("MinPositionLeft:" + minPosition);
                                 position2 = minPosition;
                                 if (!minPositions.Contains(position2))
                                     minPositions.Add(position2);
                                 break;
                             case OrthoView.Dir.Right:
-                                //Debug.Log("MaxPositionRight:" + maxPosition);
+                                Debug.Log("MaxPositionRight:" + maxPosition);
                                 position2 = maxPosition;
                                 if (!minPositions.Contains(position2))
                                     minPositions.Add(position2);
@@ -225,13 +226,13 @@ public class CameraTest : MonitoredBehaviour
                         switch (dir)
                         {
                             case OrthoView.Dir.Front:
-                                //Debug.Log("MinPositionfront:" + minPosition);
+                                print("MinPositionfront:" + minPosition);
                                 position2 = minPosition;
                                 if (!minPositions.Contains(position2))
                                     minPositions.Add(position2);
                                 break;
                             case OrthoView.Dir.Back:
-                                //Debug.Log("MaxPositionBack:" + maxPosition);
+                                print("MaxPositionBack:" + maxPosition);
                                 position2 = maxPosition;
                                 if (!minPositions.Contains(position2))
                                     minPositions.Add(position2);
@@ -244,10 +245,9 @@ public class CameraTest : MonitoredBehaviour
         }
         foreach (Vector2Int key in connectedPlatformMin.Keys)
         {
-            string result = "";
             foreach (Vector2Int value in connectedPlatformMin[key])
-                result += value.ToString();
-            Debug.Log("(" + key + ":-->" + result);
+                Debug.Log("(" + key + ":-->" + value.ToString());
+
         }
 
         foreach (Vector2Int position in portalConnectors.Keys)
@@ -310,11 +310,13 @@ public class CameraTest : MonitoredBehaviour
                             if (portalObject1 != null)
                             {
                                 portalScript1.linkedPortal = null;
+                                print("here");
                                 portalObject1.GetComponentInChildren<BoxCollider>().enabled = false;
                             }
                             if (portalObject2 != null)
                             {
                                 portalScript2.linkedPortal = null;
+                                print("here2");
                                 portalObject2.GetComponentInChildren<BoxCollider>().enabled = false;
                             }
                         }
@@ -327,7 +329,7 @@ public class CameraTest : MonitoredBehaviour
 
                             portalScript1.linkedPortal = portalScript2;
                             portalScript2.linkedPortal = portalScript1;
-                            print("linked:" + positionConected + "<->" + position);
+                            //print("linked:" + position + "<->" + positionConected);
 
                         }
                     }
@@ -370,14 +372,18 @@ public class CameraTest : MonitoredBehaviour
                         }
                         if (position.x == positionConected.x || position.y == positionConected.y)
                         {
-                            if (portalObject1 != null)
+                            if (portalObject1 != null && connectedPlatformMin[position].Contains(positionConected))
                             {
                                 portalScript1.linkedPortal = null;
+                                print(position + "->" + positionConected);
+                                print("here1");
                                 portalObject1.GetComponentInChildren<BoxCollider>().enabled = false;
                             }
-                            if (portalObject2 != null)
+                            if (portalObject2 != null && connectedPlatformMin[positionConected].Contains(position))
                             {
                                 portalScript2.linkedPortal = null;
+                                print(position + "->" + positionConected);
+                                print("here2");
                                 portalObject2.GetComponentInChildren<BoxCollider>().enabled = false;
                             }
                         }
@@ -389,7 +395,7 @@ public class CameraTest : MonitoredBehaviour
                             portalScript2 = portalObject2.GetPortalScript();
 
                             portalScript1.linkedPortal = portalScript2;
-                            print("linked:" + position + "->" + positionConected);
+                            //print("linked:" + position + "->" + positionConected);
                         }
                     }
                 }
@@ -404,13 +410,15 @@ public class CameraTest : MonitoredBehaviour
             orthoOn = !orthoOn;
             if (orthoOn)
             {
-                HandlePositionMain(MainCamera, orthoView.MinOrthoDist(MainCamera.transform.position), 1f);
+                MainCamera.transform.DOMove(orthoView.MinOrthoDist(MainCamera.transform.position).position, 1f);
+                MainCamera.transform.DORotateQuaternion(orthoView.MinOrthoDist(MainCamera.transform.position).rotation, 1f);
                 blender.BlendToMatrix(ortho, 1f);
                 HandlePortalConnection(orthoView.MinOrthoDistDir(MainCamera.transform.position));
             }
             else
             {
-                HandlePositionMain(MainCamera, perspectiveView.transform, 1f);
+                MainCamera.transform.DOMove(perspectiveView.transform.position, 1f);
+                MainCamera.transform.DORotateQuaternion(perspectiveView.transform.rotation, 1f);
                 blender.BlendToMatrix(perspective, 1f);
             }
         }
@@ -433,6 +441,11 @@ public class CameraTest : MonitoredBehaviour
             yield return 1;
         }
     }
+    private Coroutine HandlePositionMain(Camera From, Transform To, float duration)
+        {
+            StopAllCoroutines();
+            return StartCoroutine(LerpFromTo(MainCamera, From, To, duration));
+        }
 
     private IEnumerator LerpFromToGrid(Camera Camera, Camera From, Vector3 VectorTo, Quaternion QuaternionTo, float duration)
     {
@@ -450,12 +463,6 @@ public class CameraTest : MonitoredBehaviour
                 Camera.transform.rotation = QuaternionTo;
             yield return 1;
         }
-    }
-
-    private Coroutine HandlePositionMain(Camera From, Transform To, float duration)
-    {
-        StopAllCoroutines();
-        return StartCoroutine(LerpFromTo(MainCamera, From, To, duration));
     }
 
     private Coroutine HandlePositionGridMain(Camera From, Vector3 VectorTo, Quaternion QuaternionTo, float duration)

@@ -60,13 +60,14 @@ public class PlayerMovement : PortalTraveller
         targetDirection = directionCameraPosition.TransformDirection(targetDirection);
         targetDirection.y = 0.0f;
 
+        //If we want to move and we arent currently moving
         if(targetDirection != Vector3.zero && !isMoving)
         {
             if (ValidPosition(new Vector2Int((int)targetDirection.x, (int)targetDirection.z)))
             { 
                 StartCoroutine(MovePlayer(targetDirection, 0.3f, rb));
             }
-            //Debug.Log(targetDirection);
+            print("targetDirection:" + targetDirection);
         }
     }
 
@@ -78,21 +79,28 @@ public class PlayerMovement : PortalTraveller
         GridSystem.grid.GetXZ(origPos, out int x, out int z);
         Vector2Int Position = new Vector2Int(x, z);
         Vector2Int newPosition = Position + direction;
-        Debug.Log(newPosition);
-        if(GridSystem.grid.IsValidGridPosition(newPosition))
+        print("newPosition:" + newPosition);
+        if (GridSystem.grid.IsValidGridPosition(newPosition))
         {
             foreach (PlacedObjectType.Dir dirPortal in portalConnectors[Position].Keys)
             {
                 foreach (Vector2Int positionConected in portalConnectors[Position][dirPortal])
                 {
+                    
                     if (positionConected == newPosition)
                         return true;
                     else
-                    if (positionConected.x == newPosition.x || positionConected.y == newPosition.y)
                     {
-                        if (cameraTest.GetOrthoOn())
+                        print("positionConected:" + positionConected);
+                        print("positionConected.y-newPosition.y:" + (positionConected.y - newPosition.y));
+                        print("positionConected.x - newPosition.x:" + (positionConected.x - newPosition.x));
+                        if ((positionConected.x == newPosition.x && direction.y==0) || (positionConected.y == newPosition.y && direction.x == 0))
                         {
-                            return true;
+                            //print("positionConected:" + positionConected);
+                            if (cameraTest.GetOrthoOn())
+                            {
+                                return true;
+                            }
                         }
                     }
                 }

@@ -13,6 +13,7 @@ public class GroundListAssets : MonoBehaviour
     
     public PlacedObjectType[] groundList;
     public PlacedObjectType GroundPlatform;
+    public PlacedObjectType EndPlatform;
 
     public PortalObjectType[] portalList;
     public PortalObjectType Portal;
